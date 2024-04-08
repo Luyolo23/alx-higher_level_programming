@@ -1,17 +1,20 @@
 #!/usr/bin/node
-const x = process.argv[2];
 
-if (!parseInt(x)) {
-	  console.log('Missing size');
-} else {
-	  for (let i = 0; i < x; i++) {
-		      let y = 0;
-		      let myVar = '';
+const argSquare = process.argv;
+const number = parseInt(argSquare[2], 10);
 
-		      while (y < x) {
-			            myVar = myVar + 'X';
-			            y++;
+if (argSquare[2]) {
+	  if (number) {
+		      for (let i = 0; i < number; i++) {
+			            let square = '';
+			            for (let j = 0; j < number; j++) {
+					            square += 'X';
+					          }
+			            console.log(square);
 			          }
-		      console.log(myVar);
-		    }
+		    } else {
+			        console.log('Missing size');
+			      }
+} else {
+	  console.log('Missing size');
 }

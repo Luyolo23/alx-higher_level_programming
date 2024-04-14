@@ -1,27 +1,45 @@
 #!/usr/bin/python3
-"""adds the State object “California”
-with the City “San Francisco”
-to the database hbtn_0e_100_usa"""
+
+"""
+Script that creates the State “California” with the City “San Francisco”
+from the database hbtn_0e_100_usa.
+Script must take 3 arguments: mysql username, mysql password and database name
+"""
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from relationship_state import Base, State
+from relationship_city import City
+from sys import argv
+
 
 if __name__ == "__main__":
 
-    import sys
-    from relationship_state import Base, State
-    from relationship_city import City
-    from sqlalchemy import create_engine
-    from sqlalchemy.orm import Session
-    from sqlalchemy.schema import Table
+    # Check if the number of arguments is correct
+    if len(argv) != 4:
+        print("Usage: {} <username> <password> <database>".format(argv[0]))
+        exit()
 
-    engine = create_engine('mysql+mysqldb://{}:{}@localhost/{}'
-                           .format(sys.argv[1], sys.argv[2],
-                                   sys.argv[3]), pool_pre_ping=True)
+    # Creating the connection string
+    engine = create_engine('mysql+mysqldb://{}:{}@localhost:3306/{}'.format(
+        argv[1], argv[2], argv[3]), pool_pre_ping=True)
+
+    # Creating the tables in the database
     Base.metadata.create_all(engine)
 
-    session = Session(engine)
-    new_city = City(name='San Francisco')
-    new = State(name='California')
-    new.cities.append(new_city)
-    session.add_all([new, new_city])
-    session.commit()
-    session.close()
+    # Creating an instance of Session
+    Session = sessionmaker(bind=engine)
+    session = Session()
 
+    # Creating the State "California" with the City "San Francisco"
+    new_state = State(name="California")
+    new_city = City(name="San Francisco")
+    new_state.cities.append(new_city)
+
+    # Adding the State and City objects to the session and committing changes
+    session.add(new_state)
+    session.add(new_city)
+    session.commit()
+
+    # Closing the session
+    session.close()
